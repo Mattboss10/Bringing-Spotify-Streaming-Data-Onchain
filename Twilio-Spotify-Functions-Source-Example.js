@@ -149,10 +149,12 @@ TwiLink Records
 
     if (sendgridResponse.error) {
       // Bug in Twilio API return this error message even if email sends. So ignore this message.
-      if (!sendgridResponse.message.includes("Unexpected end of JSON input")) {
-        throw new Error(
-          "Sendgrid API responded with error: " + JSON.stringify(sendgridResponse.response.data.errors[0])
-        )
+      if (!sendgridResponse.message?.includes("Unexpected end of JSON input")) {
+        const errorMessage =
+          sendgridResponse.response?.data?.errors?.[0] ||
+          sendgridResponse.message ||
+          JSON.stringify(sendgridResponse.error)
+        throw new Error("Sendgrid API responded with error: " + errorMessage)
       }
     }
   } catch (error) {
